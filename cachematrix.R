@@ -13,12 +13,15 @@
 
 
 makeCacheMatrix <- function(x = matrix()) {
+  
   ## initialize the inv variable
   inv <- NULL
   set <- function(y) {
     # use `<<-` or assignment operator to assign a value to an object 
     # in global environment
+    
     x <<- y
+    
     inv <<- NULL
   }
   get <- function() x
@@ -35,4 +38,26 @@ makeCacheMatrix <- function(x = matrix()) {
 
 cacheSolve <- function(x, ...) {
         ## Return a matrix that is the inverse of 'x'
+  ## Will return the inverse of the matrix passed to the makeCacheMatrix function 
+  ## if inv variable is already cached in global environment then it will be returned
+  inv <- x$getinv()
+  
+  # After the above assignment this will check if inv variable is null or not
+  # if it is not null then it will say that data is from cache and skip costly computation
+  if (!is.null(inv)){
+    message("getting cached data")
+    return(inv)
+  }
+  
+  # If not set in environment then get it assigned  
+  data <- x$get()
+  # Solve function will inverse the passed matrix 
+  inv <- solve(data, ...)
+  
+  # Now set the value of inv obtained above using setinv function , in Cache environment
+  
+  x$setinv(inv)
+  # return the inv 
+  
+  return(inv)
 }
